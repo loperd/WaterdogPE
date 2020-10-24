@@ -16,14 +16,11 @@
 
 package pe.waterdog.network.protocol.packet;
 
-import com.nukkitx.nbt.NbtList;
-import com.nukkitx.nbt.NbtMap;
 import com.nukkitx.protocol.bedrock.packet.StartGamePacket;
 
 public class StartGamePacket388 extends StartGamePacket {
 
     private byte[] blockPaletteData;
-    private boolean changedPalette = false;
 
     public void setBlockPaletteData(byte[] blockPaletteData) {
         this.blockPaletteData = blockPaletteData;
@@ -33,19 +30,4 @@ public class StartGamePacket388 extends StartGamePacket {
         return this.blockPaletteData;
     }
 
-    public void setChangedPalette(boolean changedPalette) {
-        this.changedPalette = changedPalette;
-    }
-
-    public boolean isChangedPalette() {
-        return this.changedPalette;
-    }
-
-    @Override
-    public void setBlockPalette(NbtList<NbtMap> blockPalette) {
-        if (this.getBlockPalette() != blockPalette){
-            this.changedPalette = true;
-            super.setBlockPalette(blockPalette);
-        }
-    }
 }

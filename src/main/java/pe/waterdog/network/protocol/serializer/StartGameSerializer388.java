@@ -29,7 +29,6 @@ public class StartGameSerializer388 implements BedrockPacketSerializer<StartGame
     public static final StartGameSerializer388 INSTANCE = new StartGameSerializer388();
     private static final PlayerPermission[] PLAYER_PERMISSIONS = PlayerPermission.values();
 
-
     @Override
     public void serialize(ByteBuf buffer, BedrockPacketHelper helper, StartGamePacket388 packet) {
         VarInts.writeLong(buffer, packet.getUniqueEntityId());
@@ -48,13 +47,11 @@ public class StartGameSerializer388 implements BedrockPacketSerializer<StartGame
         buffer.writeLongLE(packet.getCurrentTick());
         VarInts.writeInt(buffer, packet.getEnchantmentSeed());
 
-        // If BlockPalette was not changed we can skip NbtMap deserialization to buffer
-        if (!packet.isChangedPalette() && packet.getBlockPaletteData() != null){
-            helper.writeByteArray(buffer, packet.getBlockPaletteData());
-            System.out.println("Using cached palette!"); //TODO: remove
+        // Use block palette cache if possible
+        if (packet.getBlockPaletteData() != null){
+            buffer.writeBytes(packet.getBlockPaletteData());
         }else {
             helper.writeTag(buffer, packet.getBlockPalette());
-            System.out.println("Serializing palette!");
         }
 
         helper.writeArray(buffer, packet.getItemEntries(), (buf, h, entry) -> {
@@ -88,10 +85,12 @@ public class StartGameSerializer388 implements BedrockPacketSerializer<StartGame
         int paletteStart = buffer.readerIndex();
         packet.setBlockPalette(helper.readTag(buffer));
 
-        //TODO: load palette to byte array
+        int paletteLength = buffer.readerIndex() - paletteStart;
+        byte[] paletteData = new byte[paletteLength];
 
-        //packet.setBlockPaletteData(paletteData);
-        //packet.setChangedPalette(false);
+        buffer.readerIndex(paletteStart);
+        buffer.readBytes(paletteData);
+        packet.setBlockPaletteData(paletteData);
 
         helper.readArray(buffer, packet.getItemEntries(), (buf, h) -> {
             String identifier = h.readString(buf);
