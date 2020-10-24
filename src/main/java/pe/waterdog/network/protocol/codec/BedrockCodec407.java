@@ -21,6 +21,8 @@ import com.nukkitx.protocol.bedrock.packet.*;
 import com.nukkitx.protocol.bedrock.v407.BedrockPacketHelper_v407;
 import com.nukkitx.protocol.bedrock.v407.serializer.*;
 import pe.waterdog.network.protocol.ProtocolVersion;
+import pe.waterdog.network.protocol.packet.StartGamePacket388;
+import pe.waterdog.network.protocol.serializer.StartGameSerializer407;
 
 public class BedrockCodec407 extends BedrockCodec390 {
 
@@ -35,7 +37,8 @@ public class BedrockCodec407 extends BedrockCodec390 {
         builder.helper(BedrockPacketHelper_v407.INSTANCE);
 
         builder.deregisterPacket(StartGamePacket.class);
-        builder.registerPacket(StartGamePacket.class, StartGameSerializer_v407.INSTANCE, 11);
+        builder.deregisterPacket(StartGamePacket388.class);
+        builder.registerPacket(StartGamePacket388.class, StartGameSerializer407.INSTANCE, 11);
 
         builder.deregisterPacket(LevelSoundEventPacket.class);
         builder.registerPacket(LevelSoundEventPacket.class, LevelSoundEventSerializer_v407.INSTANCE, 123);

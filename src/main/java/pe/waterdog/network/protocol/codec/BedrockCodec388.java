@@ -32,6 +32,8 @@ import com.nukkitx.protocol.bedrock.v361.serializer.LevelChunkSerializer_v361;
 import com.nukkitx.protocol.bedrock.v388.BedrockPacketHelper_v388;
 import com.nukkitx.protocol.bedrock.v388.serializer.*;
 import pe.waterdog.network.protocol.ProtocolVersion;
+import pe.waterdog.network.protocol.packet.StartGamePacket388;
+import pe.waterdog.network.protocol.serializer.StartGameSerializer388;
 
 public class BedrockCodec388 extends BedrockCodec {
 
@@ -53,7 +55,7 @@ public class BedrockCodec388 extends BedrockCodec {
                 .registerPacket(ResourcePackStackPacket.class, ResourcePackStackSerializer_v388.INSTANCE, 7)
                 .registerPacket(ResourcePackClientResponsePacket.class, ResourcePackClientResponseSerializer_v291.INSTANCE, 8)
                 .registerPacket(TextPacket.class, TextSerializer_v332.INSTANCE, 9)
-                .registerPacket(StartGamePacket.class, StartGameSerializer_v388.INSTANCE, 11)
+                .registerPacket(StartGamePacket388.class, StartGameSerializer388.INSTANCE, 11)
                 .registerPacket(AddPlayerPacket.class, AddPlayerSerializer_v388.INSTANCE, 12)
                 .registerPacket(AddEntityPacket.class, AddEntitySerializer_v313.INSTANCE, 13)
                 .registerPacket(RemoveEntityPacket.class, RemoveEntitySerializer_v291.INSTANCE, 14)
