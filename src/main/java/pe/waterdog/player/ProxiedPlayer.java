@@ -128,7 +128,7 @@ public class ProxiedPlayer implements CommandSender {
      */
     public void initialConnect() {
         PlayerLoginEvent event = new PlayerLoginEvent(this);
-        this.proxy.getEventManager().callEvent(event).whenComplete((futureEvent, ignored) -> {
+        this.proxy.getEventManager().callEvent(event).whenCompleteAsync((futureEvent, ignored) -> {
             if (event.isCancelled()) {
                 this.disconnect(event.getCancelReason());
                 return;
