@@ -16,15 +16,15 @@
 package dev.waterdog.query;
 
 import dev.waterdog.ProxyServer;
+import dev.waterdog.event.defaults.ProxyQueryEvent;
+import dev.waterdog.player.ProxiedPlayer;
+import dev.waterdog.utils.ProxyConfig;
+import dev.waterdog.utils.types.TranslationContainer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import dev.waterdog.event.defaults.ProxyQueryEvent;
-import dev.waterdog.player.ProxiedPlayer;
-import dev.waterdog.utils.ProxyConfig;
-import dev.waterdog.utils.types.TranslationContainer;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -37,7 +37,7 @@ public class QueryHandler {
     public static final byte[] LONG_RESPONSE_PADDING_TOP = new byte[]{115, 112, 108, 105, 116, 110, 117, 109, 0, -128, 0};
     public static final byte[] LONG_RESPONSE_PADDING_BOTTOM = new byte[]{1, 112, 108, 97, 121, 101, 114, 95, 0, 0};
 
-    public static final int PACKET_HANDSHAKE = 0x09;
+    public static final short PACKET_HANDSHAKE = 0x09;
     public static final short PACKET_STATISTICS = 0x00;
     private static final String GAME_ID = "MINECRAFTPE";
 

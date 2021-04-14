@@ -13,38 +13,27 @@
  * limitations under the License.
  */
 
-package dev.waterdog.plugin;
+package dev.waterdog.event.defaults;
 
-import lombok.ToString;
+import com.nukkitx.protocol.bedrock.BedrockClient;
+import dev.waterdog.ProxyServer;
+import dev.waterdog.event.AsyncEvent;
+import dev.waterdog.event.Event;
+import dev.waterdog.player.ProxiedPlayer;
 
-import java.util.List;
+/**
+ * Called when new downstream client for player is created and bind.
+ */
+public class ClientBindEvent extends PlayerEvent {
 
-@ToString
-public class PluginYAML {
+    private final BedrockClient client;
 
-    public String name;
-    public String version;
-    public String author;
-    public String main;
-    public List<String> depends;
-
-    public String getAuthor() {
-        return this.author;
+    public ClientBindEvent(ProxiedPlayer player, BedrockClient client) {
+        super(player);
+        this.client = client;
     }
 
-    public String getMain() {
-        return this.main;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public List<String> getDepends() {
-        return this.depends;
+    public BedrockClient getClient() {
+        return this.client;
     }
 }

@@ -18,7 +18,10 @@ package dev.waterdog.player;
 import dev.waterdog.ProxyServer;
 import dev.waterdog.utils.types.Permission;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,6 +53,10 @@ public class PlayerManager {
     public void subscribePermissions(ProxiedPlayer player) {
         this.proxy.getConfiguration().getDefaultPermissions().forEach(perm -> player.addPermission(new Permission(perm, true)));
         List<String> permissions = this.proxy.getConfiguration().getPlayerPermissions().get(player.getName());
+        if (permissions == null) {
+            return;
+        }
+
         for (String perm : permissions) {
             player.addPermission(new Permission(perm, true));
         }

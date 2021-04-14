@@ -20,19 +20,16 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.nukkitx.protocol.bedrock.BedrockClient;
 import com.nukkitx.protocol.bedrock.BedrockServer;
 import dev.waterdog.command.*;
-import dev.waterdog.packs.PackManager;
-import dev.waterdog.utils.types.*;
-import lombok.SneakyThrows;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import org.apache.logging.log4j.Level;
 import dev.waterdog.console.TerminalConsole;
 import dev.waterdog.event.EventManager;
 import dev.waterdog.event.defaults.DispatchCommandEvent;
+import dev.waterdog.event.defaults.ProxyStartEvent;
 import dev.waterdog.logger.MainLogger;
 import dev.waterdog.network.ProxyListener;
 import dev.waterdog.network.ServerInfo;
 import dev.waterdog.network.protocol.ProtocolConstants;
 import dev.waterdog.network.protocol.ProtocolVersion;
+import dev.waterdog.packs.PackManager;
 import dev.waterdog.player.PlayerManager;
 import dev.waterdog.player.ProxiedPlayer;
 import dev.waterdog.plugin.PluginManager;
@@ -42,8 +39,11 @@ import dev.waterdog.utils.ConfigurationManager;
 import dev.waterdog.utils.LangConfig;
 import dev.waterdog.utils.ProxyConfig;
 import dev.waterdog.utils.config.ServerList;
+import dev.waterdog.utils.types.*;
+import lombok.SneakyThrows;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
+import org.apache.logging.log4j.Level;
 
-import java.io.File;
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,18 +66,14 @@ public class ProxyServer {
     private final PluginManager pluginManager;
     private final EventManager eventManager;
     private final PackManager packManager;
-
-    private BedrockServer bedrockServer;
     private final ServerList serverInfoMap;
-    private QueryHandler queryHandler;
-
-    private CommandMap commandMap;
     private final ConsoleCommandSender commandSender;
-
+    private final ScheduledExecutorService tickExecutor;
+    private BedrockServer bedrockServer;
+    private QueryHandler queryHandler;
+    private CommandMap commandMap;
     private IReconnectHandler reconnectHandler;
     private IJoinHandler joinHandler;
-
-    private final ScheduledExecutorService tickExecutor;
     private ScheduledFuture<?> tickFuture;
     private boolean shutdown = false;
     private int currentTick = 0;
@@ -106,7 +102,7 @@ public class ProxyServer {
         this.configurationManager = new ConfigurationManager(this);
         this.configurationManager.loadProxyConfig();
 
-        if(!this.getConfiguration().isIpv6Enabled()) {
+        if (!this.getConfiguration().isIpv6Enabled()) {
             // Some devices and networks may not support IPv6
             System.setProperty("java.net.preferIPv4Stack", "true");
         }
@@ -157,6 +153,9 @@ public class ProxyServer {
         this.bedrockServer = new BedrockServer(bindAddress, Runtime.getRuntime().availableProcessors());
         this.bedrockServer.setHandler(new ProxyListener(this));
         this.bedrockServer.bind().join();
+
+        ProxyStartEvent event = new ProxyStartEvent(this);
+        this.eventManager.callEvent(event);
 
         this.logger.debug("Upstream <-> Proxy compression level " + this.getConfiguration().getUpstreamCompression());
         this.logger.debug("Downstream <-> Proxy compression level " + this.getConfiguration().getDownstreamCompression());
@@ -227,15 +226,19 @@ public class ProxyServer {
     }
 
     public boolean dispatchCommand(CommandSender sender, String message) {
+        if (message.trim().isEmpty()) {
+            return false;
+        }
+
         String[] args = message.split(" ");
+        if (args.length < 1) {
+            return false;
+        }
+
         String[] shiftedArgs = args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0];
         DispatchCommandEvent event = new DispatchCommandEvent(sender, args[0], shiftedArgs);
         this.eventManager.callEvent(event);
-
-        if (event.isCancelled()) {
-            return false;
-        }
-        return this.commandMap.handleCommand(sender, args[0], shiftedArgs);
+        return !event.isCancelled() && this.commandMap.handleCommand(sender, args[0], shiftedArgs);
     }
 
     public CompletableFuture<BedrockClient> bindClient(ProtocolVersion protocol) {
@@ -355,7 +358,7 @@ public class ProxyServer {
      * @return an unmodifiable collection containing all registered ServerInfo instances
      */
     public Collection<ServerInfo> getServers() {
-        return Collections.unmodifiableCollection(this.serverInfoMap.values());
+        return this.serverInfoMap.values();
     }
 
     public Path getPluginPath() {

@@ -20,12 +20,12 @@ import com.nukkitx.protocol.bedrock.packet.*;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
 import dev.waterdog.network.protocol.ProtocolVersion;
 import dev.waterdog.network.rewrite.BlockMap;
-import dev.waterdog.network.rewrite.BlockMapModded;
+import dev.waterdog.network.rewrite.BlockMapSimple;
 import dev.waterdog.network.rewrite.types.BlockPalette;
 import dev.waterdog.network.rewrite.types.RewriteData;
 import dev.waterdog.network.session.SessionInjections;
-import dev.waterdog.utils.exceptions.CancelSignalException;
 import dev.waterdog.player.ProxiedPlayer;
+import dev.waterdog.utils.exceptions.CancelSignalException;
 
 import javax.crypto.SecretKey;
 import java.net.URI;
@@ -98,14 +98,14 @@ public class InitialHandler extends AbstractDownstreamHandler {
         }
 
         // Starting with 419 server does not send vanilla blocks to client
-        if (this.player.getProtocol().getProtocol() <= ProtocolVersion.MINECRAFT_PE_1_16_20.getProtocol()){
+        if (this.player.getProtocol().getProtocol() <= ProtocolVersion.MINECRAFT_PE_1_16_20.getProtocol()) {
             BlockPalette palette = BlockPalette.getPalette(packet.getBlockPalette(), this.player.getProtocol());
             rewriteData.setBlockPalette(palette);
             rewriteData.setBlockPaletteRewrite(palette.createRewrite(palette));
             this.player.getRewriteMaps().setBlockMap(new BlockMap(this.player));
-        }else {
+        } else {
             rewriteData.setBlockProperties(packet.getBlockProperties());
-            this.player.getRewriteMaps().setBlockMap(new BlockMapModded(this.player));
+            this.player.getRewriteMaps().setBlockMap(new BlockMapSimple(this.player));
         }
 
         this.player.setCanRewrite(true);

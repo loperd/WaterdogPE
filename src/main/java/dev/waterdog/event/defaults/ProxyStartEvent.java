@@ -13,38 +13,25 @@
  * limitations under the License.
  */
 
-package dev.waterdog.plugin;
+package dev.waterdog.event.defaults;
 
-import lombok.ToString;
+import dev.waterdog.ProxyServer;
+import dev.waterdog.event.AsyncEvent;
+import dev.waterdog.event.Event;
 
-import java.util.List;
+/**
+ * Called once BedrockServer is created and bind.
+ */
+@AsyncEvent
+public class ProxyStartEvent extends Event {
 
-@ToString
-public class PluginYAML {
+    private final ProxyServer proxyServer;
 
-    public String name;
-    public String version;
-    public String author;
-    public String main;
-    public List<String> depends;
-
-    public String getAuthor() {
-        return this.author;
+    public ProxyStartEvent(ProxyServer proxyServer) {
+        this.proxyServer = proxyServer;
     }
 
-    public String getMain() {
-        return this.main;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public List<String> getDepends() {
-        return this.depends;
+    public ProxyServer getProxy() {
+        return this.proxyServer;
     }
 }

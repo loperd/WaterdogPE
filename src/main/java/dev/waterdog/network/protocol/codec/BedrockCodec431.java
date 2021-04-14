@@ -13,38 +13,22 @@
  * limitations under the License.
  */
 
-package dev.waterdog.plugin;
+package dev.waterdog.network.protocol.codec;
 
-import lombok.ToString;
+import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
+import com.nukkitx.protocol.bedrock.v431.BedrockPacketHelper_v431;
+import dev.waterdog.network.protocol.ProtocolVersion;
 
-import java.util.List;
+public class BedrockCodec431 extends BedrockCodec428 {
 
-@ToString
-public class PluginYAML {
-
-    public String name;
-    public String version;
-    public String author;
-    public String main;
-    public List<String> depends;
-
-    public String getAuthor() {
-        return this.author;
+    @Override
+    public ProtocolVersion getProtocol() {
+        return ProtocolVersion.MINECRAFT_PE_1_16_220;
     }
 
-    public String getMain() {
-        return this.main;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getVersion() {
-        return this.version;
-    }
-
-    public List<String> getDepends() {
-        return this.depends;
+    @Override
+    public void buildCodec(BedrockPacketCodec.Builder builder) {
+        super.buildCodec(builder);
+        builder.helper(BedrockPacketHelper_v431.INSTANCE);
     }
 }

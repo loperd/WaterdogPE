@@ -16,14 +16,13 @@
 package dev.waterdog.network.downstream;
 
 import com.nukkitx.protocol.bedrock.packet.*;
-import dev.waterdog.command.Command;
-import dev.waterdog.network.ServerInfo;
-import dev.waterdog.utils.exceptions.CancelSignalException;
-import dev.waterdog.utils.types.TranslationContainer;
 import dev.waterdog.event.defaults.PostTransferCompleteEvent;
+import dev.waterdog.network.ServerInfo;
 import dev.waterdog.network.rewrite.types.RewriteData;
 import dev.waterdog.network.session.ServerConnection;
 import dev.waterdog.player.ProxiedPlayer;
+import dev.waterdog.utils.exceptions.CancelSignalException;
+import dev.waterdog.utils.types.TranslationContainer;
 
 public class ConnectedDownstreamHandler extends AbstractDownstreamHandler {
 
@@ -55,20 +54,6 @@ public class ConnectedDownstreamHandler extends AbstractDownstreamHandler {
                 this.player.getBossbars().remove(packet.getBossUniqueEntityId());
         }
         return false;
-    }
-
-    @Override
-    public boolean handle(AvailableCommandsPacket packet) {
-        if (!this.player.getProxy().getConfiguration().injectCommands()) {
-            return false;
-        }
-
-        for (Command command : this.player.getProxy().getCommandMap().getCommands().values()) {
-            if (command.getPermission() == null || this.player.hasPermission(command.getPermission())) {
-                packet.getCommands().add(command.getData());
-            }
-        }
-        return true;
     }
 
     @Override
