@@ -68,7 +68,7 @@ public class PluginManager {
 
         Map<PluginYAML, Path> plugins = new TreeMap<>(comparator);
 
-        Files.walk(folderPath).filter(Files::isRegularFile).filter(PluginLoader::isJarFile).forEach(jarPath -> {
+        Files.walk(folderPath, 1).filter(Files::isRegularFile).filter(PluginLoader::isJarFile).forEach(jarPath -> {
             PluginYAML config = this.loadPluginConfig(jarPath);
             if (config != null) {
                 plugins.put(config, jarPath);
