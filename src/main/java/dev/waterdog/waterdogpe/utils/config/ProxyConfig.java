@@ -146,6 +146,10 @@ public class ProxyConfig extends YamlConfig {
     @Comment("Creating threads may be in some situations expensive. Specify minimum count of idle threads per internal thread executors. Set to -1 to auto-detect by core count.")
     private int defaultIdleThreads = -1;
 
+    @Path("ip_forwarding")
+    @Comment("Is it necessary to forwarding the IP address of the upstream client(Bedrock Client) to the downstream client(Nukkit Client)? Set to true for enabled and false for disabled.")
+    private boolean ipForwarding = false;
+
     public ProxyConfig(File file) {
         this.CONFIG_HEADER = new String[]{"Waterdog Main Configuration file", "Configure your desired network settings here."};
         this.CONFIG_FILE = file;
@@ -304,5 +308,13 @@ public class ProxyConfig extends YamlConfig {
 
     public int getIdleThreads() {
         return this.defaultIdleThreads < 1 ? Runtime.getRuntime().availableProcessors() : this.defaultIdleThreads;
+    }
+
+    public void setIpForwarding(Boolean forward) {
+        this.ipForwarding = forward;
+    }
+
+    public boolean isEnabledIpForwarding() {
+        return this.ipForwarding;
     }
 }

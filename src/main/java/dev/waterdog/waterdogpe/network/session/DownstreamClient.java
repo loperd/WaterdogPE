@@ -43,7 +43,7 @@ public interface DownstreamClient {
     }
 
     /**
-     * After successfull binding this method can be called to fully establish the connection and open new session.
+     * After successful binding this method can be called to fully establish the connection and open new session.
      * @param address downstream server address
      * @param timeout value of time in 'unit' when the connection times-out
      * @param unit TimeUnit representation of timeout

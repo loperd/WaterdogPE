@@ -68,6 +68,7 @@ public class PluginManager {
 
         Map<PluginYAML, Path> plugins = new TreeMap<>(comparator);
 
+        // ProxyCord - add a maxDepth argument to limit the loading of .jar files as a plugin
         Files.walk(folderPath, 1).filter(Files::isRegularFile).filter(PluginLoader::isJarFile).forEach(jarPath -> {
             PluginYAML config = this.loadPluginConfig(jarPath);
             if (config != null) {

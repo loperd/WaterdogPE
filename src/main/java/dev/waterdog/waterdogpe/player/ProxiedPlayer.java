@@ -223,6 +223,8 @@ public class ProxiedPlayer implements CommandSender {
                 return;
             }
 
+            this.getLogger().info("Client address already bind is: [" + client.getBindAddress().getHostString() + ":" + client.getBindAddress().getPort() + "]");
+
             if (error != null) {
                 this.connectFailure(client, targetServer, error);
                 return;

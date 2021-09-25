@@ -48,6 +48,12 @@ public class HandshakeEntry {
         PreClientDataSetEvent event = new PreClientDataSetEvent(this.clientData, this.extraData, EncryptionUtils.createKeyPair(), session);
         proxy.getEventManager().callEvent(event);
 
+        // ProxyCord start - add hostname to extraData
+        if (proxy.getConfiguration().isEnabledIpForwarding() && !this.extraData.has("hostName")) {
+            this.extraData.addProperty("hostName", session.getAddress().getHostString());
+        }
+        // ProxyCord end
+
         LoginData.LoginDataBuilder builder = LoginData.builder();
         builder.displayName(this.extraData.get("displayName").getAsString());
         builder.uuid(UUID.fromString(this.extraData.get("identity").getAsString()));
