@@ -119,20 +119,20 @@ public class ProxiedPlayer implements CommandSender {
      */
     public void initPlayer() {
         SessionInjections.injectUpstreamSettings(this.upstream, this);
-        if (!this.proxy.getConfiguration().enabledResourcePacks()) {
-            this.initialConnect();
-            return;
-        }
+//        if (!this.proxy.getConfiguration().enabledResourcePacks()) {
+//            this.initialConnect();
+//            return;
+//        }
 
         ResourcePacksInfoPacket packet = this.proxy.getPackManager().getPacksInfoPacket();
         PlayerResourcePackInfoSendEvent event = new PlayerResourcePackInfoSendEvent(this, packet);
         this.proxy.getEventManager().callEvent(event);
-        if (event.isCancelled()) {
-            // Connect player to downstream without sending ResourcePacksInfoPacket
-            this.acceptResourcePacks = false;
-            this.initialConnect();
-            return;
-        }
+//        if (event.isCancelled()) {
+//            // Connect player to downstream without sending ResourcePacksInfoPacket
+//            this.acceptResourcePacks = false;
+//            this.initialConnect();
+//            return;
+//        }
 
         this.upstream.setPacketHandler(new ResourcePacksHandler(this));
         this.upstream.sendPacket(event.getPacket());
@@ -318,6 +318,7 @@ public class ProxiedPlayer implements CommandSender {
         }
 
         this.proxy.getPlayerManager().removePlayer(this);
+        this.proxy.getMonoProtection().removePlayer(this);
         this.getLogger().info("[" + this.getAddress() + "|" + this.getName() + "] -> Upstream has disconnected");
         if (reason != null) this.getLogger().info("[" + this.getName() + "] -> Disconnected with: §c" + reason);
     }

@@ -17,7 +17,6 @@ package dev.waterdog.waterdogpe.network.protocol;
 
 import com.google.common.base.Preconditions;
 import dev.waterdog.waterdogpe.ProxyServer;
-import dev.waterdog.waterdogpe.VersionInfo;
 import dev.waterdog.waterdogpe.WaterdogPE;
 import dev.waterdog.waterdogpe.network.protocol.codec.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -84,21 +83,19 @@ public class ProtocolConstants {
      *
      * @param protocol     protocol version matched for instance of BedrockCodec.
      * @param bedrockCodec must match same protocol version as protocol or exception will be thrown.
-     * @return if registration was not canceled by plugin.
      */
-    protected static boolean registerCodec(ProtocolVersion protocol, BedrockCodec bedrockCodec) {
+    protected static void registerCodec(ProtocolVersion protocol, BedrockCodec bedrockCodec) {
         Preconditions.checkArgument(!protocol2CodecMap.containsKey(protocol), "BedrockCodec " + protocol + " is registered!");
         Preconditions.checkArgument(protocol == bedrockCodec.getProtocol(), "Protocol versions does not match!");
 
         ProxyServer proxy = ProxyServer.getInstance();
         boolean success = bedrockCodec.initializeCodec(protocol, proxy);
         if (!success) {
-            return false;
+            return;
         }
 
         protocol.setBedrockCodec(bedrockCodec);
         protocol2CodecMap.put(protocol, bedrockCodec);
         proxy.getLogger().debug("Registered custom BedrockCodec " + protocol);
-        return true;
     }
 }

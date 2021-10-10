@@ -16,8 +16,14 @@
 package dev.waterdog.waterdogpe.network.protocol.codec;
 
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
-import com.nukkitx.protocol.bedrock.packet.EntityPickRequestPacket;
-import com.nukkitx.protocol.bedrock.packet.StartGamePacket;
+import com.nukkitx.protocol.bedrock.packet.*;
+import com.nukkitx.protocol.bedrock.v291.serializer.AdventureSettingsSerializer_v291;
+import com.nukkitx.protocol.bedrock.v291.serializer.PlayStatusSerializer_v291;
+import com.nukkitx.protocol.bedrock.v291.serializer.SetTimeSerializer_v291;
+import com.nukkitx.protocol.bedrock.v313.serializer.AvailableEntityIdentifiersSerializer_v313;
+import com.nukkitx.protocol.bedrock.v313.serializer.BiomeDefinitionListSerializer_v313;
+import com.nukkitx.protocol.bedrock.v361.serializer.LevelChunkSerializer_v361;
+import com.nukkitx.protocol.bedrock.v407.serializer.CreativeContentSerializer_v407;
 import com.nukkitx.protocol.bedrock.v465.BedrockPacketHelper_v465;
 import com.nukkitx.protocol.bedrock.v465.serializer.EntityPickRequestSerializer_v465;
 import com.nukkitx.protocol.bedrock.v465.serializer.StartGameSerializer_v465;
@@ -40,5 +46,26 @@ public class BedrockCodec465 extends BedrockCodec448 {
 
         builder.deregisterPacket(EntityPickRequestPacket.class);
         builder.registerPacket(EntityPickRequestPacket.class, EntityPickRequestSerializer_v465.INSTANCE, 35);
+
+
+        builder.registerPacket(SetTimePacket.class, SetTimeSerializer_v291.INSTANCE, 10);
+
+        builder.deregisterPacket(LevelChunkPacket.class);
+        builder.registerPacket(LevelChunkPacket.class, LevelChunkSerializer_v361.INSTANCE, 58);
+
+        builder.deregisterPacket(PlayStatusPacket.class);
+        builder.registerPacket(PlayStatusPacket.class, PlayStatusSerializer_v291.INSTANCE, 2);
+
+        builder.deregisterPacket(CreativeContentPacket.class);
+        builder.registerPacket(CreativeContentPacket.class, CreativeContentSerializer_v407.INSTANCE, 145);
+
+        builder.deregisterPacket(BiomeDefinitionListPacket.class);
+        builder.registerPacket(BiomeDefinitionListPacket.class, BiomeDefinitionListSerializer_v313.INSTANCE, 122);
+
+        builder.deregisterPacket(AvailableEntityIdentifiersPacket.class);
+        builder.registerPacket(AvailableEntityIdentifiersPacket.class, AvailableEntityIdentifiersSerializer_v313.INSTANCE, 119);
+
+        builder.deregisterPacket(AdventureSettingsPacket.class);
+        builder.registerPacket(AdventureSettingsPacket.class, AdventureSettingsSerializer_v291.INSTANCE, 55);
     }
 }

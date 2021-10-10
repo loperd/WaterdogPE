@@ -61,7 +61,12 @@ public class ResourcePacksHandler extends AbstractUpstreamHandler {
                 break;
             case COMPLETED:
                 if (!this.player.hasUpstreamBridge()) {
-                    this.player.initialConnect(); // First connection
+                    try {
+                        this.player.getProxy().getMonoProtection().connect(player);
+                    } catch (IllegalArgumentException ex) {
+                        String reason = "Error: " + ex.getMessage();
+                        this.player.disconnect(reason);
+                    }
                 }
                 break;
         }

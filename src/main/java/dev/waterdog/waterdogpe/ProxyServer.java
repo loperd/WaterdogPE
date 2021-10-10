@@ -41,6 +41,7 @@ import dev.waterdog.waterdogpe.utils.config.ProxyConfig;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfoMap;
 import dev.waterdog.waterdogpe.utils.types.ProxyListenerInterface;
 import dev.waterdog.waterdogpe.utils.types.*;
+import me.loper.waterdog.monoprotector.MonoProtection;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import java.net.InetSocketAddress;
@@ -68,6 +69,7 @@ public class ProxyServer {
     private final PackManager packManager;
 
     private final ServerInfoMap serverInfoMap = new ServerInfoMap();
+    private final MonoProtection monoProtection;
 
     private BedrockServer bedrockServer;
     private QueryHandler queryHandler;
@@ -92,6 +94,7 @@ public class ProxyServer {
         this.dataPath = Paths.get(filePath);
         this.pluginPath = Paths.get(pluginPath);
         this.packsPath = this.dataPath.resolve("packs");
+        this.monoProtection = new MonoProtection();
 
         if (!this.pluginPath.toFile().exists()) {
             if (this.pluginPath.toFile().mkdirs())
@@ -321,6 +324,10 @@ public class ProxyServer {
 
     public Map<UUID, ProxiedPlayer> getPlayers() {
         return this.playerManager.getPlayers();
+    }
+
+    public MonoProtection getMonoProtection() {
+        return this.monoProtection;
     }
 
     @Deprecated
