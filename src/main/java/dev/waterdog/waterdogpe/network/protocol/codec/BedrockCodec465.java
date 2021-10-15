@@ -18,12 +18,17 @@ package dev.waterdog.waterdogpe.network.protocol.codec;
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.packet.*;
 import com.nukkitx.protocol.bedrock.v291.serializer.AdventureSettingsSerializer_v291;
+import com.nukkitx.protocol.bedrock.v291.serializer.MapInfoRequestSerializer_v291;
 import com.nukkitx.protocol.bedrock.v291.serializer.PlayStatusSerializer_v291;
 import com.nukkitx.protocol.bedrock.v291.serializer.SetTimeSerializer_v291;
 import com.nukkitx.protocol.bedrock.v313.serializer.AvailableEntityIdentifiersSerializer_v313;
 import com.nukkitx.protocol.bedrock.v313.serializer.BiomeDefinitionListSerializer_v313;
+import com.nukkitx.protocol.bedrock.v354.serializer.ClientboundMapItemDataSerializer_v354;
 import com.nukkitx.protocol.bedrock.v361.serializer.LevelChunkSerializer_v361;
 import com.nukkitx.protocol.bedrock.v407.serializer.CreativeContentSerializer_v407;
+import com.nukkitx.protocol.bedrock.v407.serializer.InventoryContentSerializer_v407;
+import com.nukkitx.protocol.bedrock.v407.serializer.InventorySlotSerializer_v407;
+import com.nukkitx.protocol.bedrock.v419.serializer.UpdateAttributesSerializer_v419;
 import com.nukkitx.protocol.bedrock.v465.BedrockPacketHelper_v465;
 import com.nukkitx.protocol.bedrock.v465.serializer.EntityPickRequestSerializer_v465;
 import com.nukkitx.protocol.bedrock.v465.serializer.StartGameSerializer_v465;
@@ -67,5 +72,20 @@ public class BedrockCodec465 extends BedrockCodec448 {
 
         builder.deregisterPacket(AdventureSettingsPacket.class);
         builder.registerPacket(AdventureSettingsPacket.class, AdventureSettingsSerializer_v291.INSTANCE, 55);
+
+        builder.deregisterPacket(UpdateAttributesPacket.class);
+        builder.registerPacket(UpdateAttributesPacket.class, UpdateAttributesSerializer_v419.INSTANCE, 29);
+
+        builder.deregisterPacket(ClientboundMapItemDataPacket.class);
+        builder.registerPacket(ClientboundMapItemDataPacket.class, ClientboundMapItemDataSerializer_v354.INSTANCE, 67);
+
+        builder.deregisterPacket(MapInfoRequestPacket.class);
+        builder.registerPacket(MapInfoRequestPacket.class, MapInfoRequestSerializer_v291.INSTANCE, 68);
+
+        builder.deregisterPacket(InventorySlotPacket.class);
+        builder.registerPacket(InventorySlotPacket.class, InventorySlotSerializer_v407.INSTANCE, 50);
+
+        builder.deregisterPacket(InventoryContentPacket.class);
+        builder.registerPacket(InventoryContentPacket.class, InventoryContentSerializer_v407.INSTANCE, 49);
     }
 }

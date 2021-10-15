@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package me.loper.waterdog.monoprotector.upstream.utils;
+package me.loper.waterdog.monoprotector.nbt;
 
 import com.nukkitx.nbt.NBTOutputStream;
 import com.nukkitx.nbt.NbtMap;
