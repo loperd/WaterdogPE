@@ -18,14 +18,14 @@ package dev.waterdog.waterdogpe.network.downstream;
 import com.nimbusds.jwt.SignedJWT;
 import com.nukkitx.protocol.bedrock.packet.*;
 import com.nukkitx.protocol.bedrock.util.EncryptionUtils;
-import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import dev.waterdog.waterdogpe.network.protocol.ProtocolVersion;
 import dev.waterdog.waterdogpe.network.rewrite.BlockMap;
 import dev.waterdog.waterdogpe.network.rewrite.BlockMapSimple;
 import dev.waterdog.waterdogpe.network.rewrite.types.BlockPalette;
 import dev.waterdog.waterdogpe.network.rewrite.types.RewriteData;
+import dev.waterdog.waterdogpe.network.serverinfo.ServerInfo;
 import dev.waterdog.waterdogpe.network.session.DownstreamClient;
-import dev.waterdog.waterdogpe.network.session.SessionInjections;
+import dev.waterdog.waterdogpe.network.session.TransferCallback;
 import dev.waterdog.waterdogpe.player.ProxiedPlayer;
 import dev.waterdog.waterdogpe.utils.exceptions.CancelSignalException;
 import dev.waterdog.waterdogpe.utils.types.TranslationContainer;
@@ -34,7 +34,8 @@ import javax.crypto.SecretKey;
 import java.net.URI;
 import java.security.interfaces.ECPublicKey;
 import java.util.Base64;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static dev.waterdog.waterdogpe.player.PlayerRewriteUtils.*;
 
 public class InitialHandler extends AbstractDownstreamHandler {
 
@@ -99,10 +100,11 @@ public class InitialHandler extends AbstractDownstreamHandler {
     public final boolean handle(StartGamePacket packet) {
         RewriteData rewriteData = this.player.getRewriteData();
         rewriteData.setOriginalEntityId(packet.getRuntimeEntityId());
-        rewriteData.setEntityId(ThreadLocalRandom.current().nextInt(10000, 15000));
         rewriteData.setGameRules(packet.getGamerules());
-        rewriteData.setDimension(packet.getDimensionId());
         rewriteData.setSpawnPosition(packet.getPlayerPosition());
+        rewriteData.setRotation(packet.getRotation());
+
+        this.player.getLogger().info("UniqueId: " + packet.getUniqueEntityId() + "; RuntimeEntityId: " + packet.getRuntimeEntityId());
 
         // Starting with 419 server does not send vanilla blocks to client
         if (this.player.getProtocol().isBeforeOrEqual(ProtocolVersion.MINECRAFT_PE_1_16_20)) {
@@ -123,7 +125,28 @@ public class InitialHandler extends AbstractDownstreamHandler {
 
         int blockingId = client.getSession().getHardcodedBlockingId();
         this.player.getUpstream().getHardcodedBlockingId().set(blockingId);
+
+        injectGameMode(this.player.getUpstream(), packet.getPlayerGameType());
+        injectSetDifficulty(this.player.getUpstream(), packet.getDifficulty());
+        injectPosition(this.player.getUpstream(), rewriteData.getSpawnPosition(), rewriteData.getRotation(), rewriteData.getEntityId());
+        this.client.getSession().sendPacket(this.player.getLoginData().getChunkRadius());
+
+        int newDimension = determineDimensionId(rewriteData.getDimension(), packet.getDimensionId());
+        TransferCallback transferCallback = new TransferCallback(this.player, this.client, packet.getDimensionId());
+
+        rewriteData.setDimension(newDimension);
+        rewriteData.setTransferCallback(transferCallback);
+        this.player.setDimensionChangeState(TransferCallback.TRANSFER_PHASE_1);
+        injectDimensionChange(this.player.getUpstream(), newDimension, packet.getPlayerPosition());
+
+        if (newDimension == packet.getDimensionId()) {
+            // Transfer between different dimensions
+            // Simulate two dim-change behaviour
+            transferCallback.onDimChangeSuccess();
+        }
+
         this.client.getSession().onInitialServerConnected(player);
+        this.client.getSession().onServerConnected(player);
         return true;
     }
 }

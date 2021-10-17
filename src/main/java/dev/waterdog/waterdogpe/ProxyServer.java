@@ -41,7 +41,7 @@ import dev.waterdog.waterdogpe.utils.config.ProxyConfig;
 import dev.waterdog.waterdogpe.network.serverinfo.ServerInfoMap;
 import dev.waterdog.waterdogpe.utils.types.ProxyListenerInterface;
 import dev.waterdog.waterdogpe.utils.types.*;
-import me.loper.waterdog.monoprotector.MonoProtection;
+import me.loper.monoprotection.MonoProtection;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import java.net.InetSocketAddress;

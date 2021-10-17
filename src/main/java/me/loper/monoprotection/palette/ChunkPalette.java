@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package me.loper.waterdog.monoprotector.nbt;
+package me.loper.monoprotection.palette;
 
 import com.nukkitx.nbt.NBTOutputStream;
 import com.nukkitx.nbt.NbtMap;
@@ -22,7 +22,7 @@ import com.nukkitx.nbt.NbtUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class PaletteManager {
+public class ChunkPalette {
 
     public static final byte[] EMPTY_LEVEL_CHUNK_DATA;
     private static final NbtMap EMPTY_TAG = NbtMap.EMPTY;

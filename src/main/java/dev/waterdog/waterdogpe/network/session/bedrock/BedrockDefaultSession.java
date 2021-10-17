@@ -48,7 +48,7 @@ public class BedrockDefaultSession implements DownstreamSession {
 
         if (initial) {
             this.session.setPacketHandler(new InitialHandler(player, this.client));
-            this.session.setBatchHandler(new BedrockDownstreamBridge(player, player.getUpstream()));
+            this.session.setBatchHandler(new BedrockTransferBatchBridge(player, player.getUpstream(), this));
         } else {
             this.session.setPacketHandler(new SwitchDownstreamHandler(player, this.client));
             this.session.setBatchHandler(new BedrockTransferBatchBridge(player, player.getUpstream(), this));

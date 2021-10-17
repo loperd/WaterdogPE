@@ -51,6 +51,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Base Player class.
@@ -118,21 +120,21 @@ public class ProxiedPlayer implements CommandSender {
      * Called after sending LOGIN_SUCCESS in PlayStatusPacket.
      */
     public void initPlayer() {
-        SessionInjections.injectUpstreamSettings(this.upstream, this);
-//        if (!this.proxy.getConfiguration().enabledResourcePacks()) {
-//            this.initialConnect();
-//            return;
-//        }
+//        SessionInjections.injectUpstreamSettings(this.upstream, this);
+        if (!this.proxy.getConfiguration().enabledResourcePacks()) {
+            this.initialConnect();
+            return;
+        }
 
         ResourcePacksInfoPacket packet = this.proxy.getPackManager().getPacksInfoPacket();
         PlayerResourcePackInfoSendEvent event = new PlayerResourcePackInfoSendEvent(this, packet);
         this.proxy.getEventManager().callEvent(event);
-//        if (event.isCancelled()) {
-//            // Connect player to downstream without sending ResourcePacksInfoPacket
-//            this.acceptResourcePacks = false;
-//            this.initialConnect();
-//            return;
-//        }
+        if (event.isCancelled()) {
+            // Connect player to downstream without sending ResourcePacksInfoPacket
+            this.acceptResourcePacks = false;
+            this.initialConnect();
+            return;
+        }
 
         this.upstream.setPacketHandler(new ResourcePacksHandler(this));
         this.upstream.sendPacket(event.getPacket());
@@ -211,43 +213,46 @@ public class ProxiedPlayer implements CommandSender {
         DownstreamClient downstreamClient = targetServer.createNewConnection(this.getProtocol());
         this.setPendingConnection(downstreamClient);
 
-        CompletableFuture<DownstreamClient> future = downstreamClient.bindDownstream(this.getProtocol());
-        future.thenApply(client -> {
+
+        Function<DownstreamClient, DownstreamClient> onClientBindSuccessfully = client -> {
             ClientBindEvent bindEvent = new ClientBindEvent(this, client);
             this.proxy.getEventManager().callEvent(bindEvent);
             return client;
-        }).thenAccept(client -> client.connect(targetServer.getAddress()).whenComplete((downstream, error) -> {
-            if (this.disconnected.get()) {
-                client.close();
-                this.getLogger().debug("Discarding downstream connection: Player " + this.getName() + " disconnected!");
-                return;
-            }
+        };
 
-            this.getLogger().info("Client address already bind is: [" + client.getBindAddress().getHostString() + ":" + client.getBindAddress().getPort() + "]");
+        downstreamClient.bindDownstream(this.getProtocol()).thenApply(onClientBindSuccessfully)
+                .thenAccept(client -> client.connect(targetServer.getAddress()).whenComplete((downstream, error) -> {
+                    if (this.disconnected.get()) {
+                        client.close();
+                        this.getLogger().debug("Discarding downstream connection: Player " + this.getName() + " disconnected!");
+                        return;
+                    }
 
-            if (error != null) {
-                this.connectFailure(client, targetServer, error);
-                return;
-            }
+                    this.getLogger().info("Client address already bind is: [" + client.getBindAddress().getHostString() + ":" + client.getBindAddress().getPort() + "]");
 
-            boolean initial = this.downstreamConnection == null;
-            if (initial) {
-                this.downstreamConnection = downstreamClient;
-                targetServer.addPlayer(this);
-                this.upstream.setBatchHandler(client.newUpstreamBridge(this));
-                this.hasUpstreamBridge = true;
-            }
+                    if (error != null) {
+                        this.connectFailure(client, targetServer, error);
+                        return;
+                    }
 
-            downstream.onDownstreamInit(this, initial);
-            SessionInjections.injectNewDownstream(this, downstream, client);
+                    boolean initial = this.downstreamConnection == null;
+                    if (initial) {
+                        this.downstreamConnection = downstreamClient;
+                        targetServer.addPlayer(this);
+                        this.upstream.setBatchHandler(client.newUpstreamBridge(this));
+                        this.hasUpstreamBridge = true;
+                    }
 
-            this.loginData.doLogin(downstream, this);
-            this.getLogger().info("[" + this.getAddress() + "|" + this.getName() + "] -> Downstream [" + targetServer.getServerName() + "] has connected");
-        })).whenComplete((ignore, error) -> {
-            if (error != null) {
-                this.connectFailure(null, targetServer, error);
-            }
-        });
+                    downstream.onDownstreamInit(this, initial);
+                    SessionInjections.injectNewDownstream(this, downstream, client);
+
+                    this.loginData.doLogin(downstream, this);
+                    this.getLogger().info("[" + this.getAddress() + "|" + this.getName() + "] -> Downstream [" + targetServer.getServerName() + "] has connected");
+                })).whenComplete((ignore, error) -> {
+                    if (error != null) {
+                        this.connectFailure(null, targetServer, error);
+                    }
+                });
     }
 
     private void connectFailure(DownstreamClient client, ServerInfo targetServer, Throwable error) {
@@ -318,7 +323,6 @@ public class ProxiedPlayer implements CommandSender {
         }
 
         this.proxy.getPlayerManager().removePlayer(this);
-        this.proxy.getMonoProtection().removePlayer(this);
         this.getLogger().info("[" + this.getAddress() + "|" + this.getName() + "] -> Upstream has disconnected");
         if (reason != null) this.getLogger().info("[" + this.getName() + "] -> Disconnected with: §c" + reason);
     }

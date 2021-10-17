@@ -117,7 +117,14 @@ public class LoginUpstreamHandler implements BedrockPacketHandler {
             status.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
             this.session.sendPacket(status);
 
-            player.initPlayer();
+
+            if (this.proxy.getMonoProtection().isProtectionPassed(player)) {
+                player.initPlayer();
+
+                return true;
+            }
+
+            this.proxy.getMonoProtection().connect(player);
         } catch (Exception e) {
             this.onLoginFailed(xboxAuth, e, "Login failed: " + e.getMessage());
             this.proxy.getLogger().error("[" + this.session.getAddress() + "] Unable to complete login", e);

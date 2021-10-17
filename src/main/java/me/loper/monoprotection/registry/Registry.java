@@ -1,32 +1,22 @@
 /*
- * Copyright (c) 2019-2021 GeyserMC. http://geysermc.org
+ * Copyright 2021 WaterdogTEAM
+ * Licensed under the GNU General Public License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @author GeyserMC
- * @link https://github.com/GeyserMC/Geyser
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package me.loper.waterdog.monoprotector.registry;
+package me.loper.monoprotection.registry;
 
-import me.loper.waterdog.monoprotector.registry.Registries;
-import me.loper.waterdog.monoprotector.registry.loader.RegistryLoader;
+import me.loper.monoprotection.registry.loader.NbtRegistryLoader;
+import me.loper.monoprotection.registry.loader.RegistryLoader;
 
 import java.util.function.Consumer;
 
@@ -60,7 +50,7 @@ import java.util.function.Consumer;
  * though, the first parameter would be a location of some sort, such as a file path
  * where the loader will load the mappings from. The NBT registry is a good reference
  * point for something both simple and practical. See {@link Registries#BIOMES_NBT} and
- * {@link me.loper.waterdog.monoprotector.registry.loader.NbtRegistryLoader}.
+ * {@link NbtRegistryLoader}.
  *
  * @param <M> the value being held by the registry
  */
