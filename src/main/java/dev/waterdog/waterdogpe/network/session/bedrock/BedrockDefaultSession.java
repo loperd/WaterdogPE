@@ -46,15 +46,13 @@ public class BedrockDefaultSession implements DownstreamSession {
     public void onDownstreamInit(ProxiedPlayer player, boolean initial) {
         this.session.setCompressionLevel(player.getProxy().getConfiguration().getDownstreamCompression());
 
-        if (initial) {
-            this.session.setPacketHandler(new InitialHandler(player, this.client));
-            this.session.setBatchHandler(new BedrockTransferBatchBridge(player, player.getUpstream(), this));
-        } else {
-            this.session.setPacketHandler(new SwitchDownstreamHandler(player, this.client));
-            this.session.setBatchHandler(new BedrockTransferBatchBridge(player, player.getUpstream(), this));
-            // Make sure TransferBatchBridge queue is released and there is no memory leak
-            this.session.addDisconnectHandler(reason -> TransferBatchBridge.release(this.session.getBatchHandler()));
-        }
+        this.session.setPacketHandler(initial
+                ? new InitialHandler(player, this.client)
+                : new SwitchDownstreamHandler(player, this.client));
+
+        this.session.setBatchHandler(new BedrockTransferBatchBridge(player, player.getUpstream(), this));
+        // Make sure TransferBatchBridge queue is released and there is no memory leak
+        this.session.addDisconnectHandler(reason -> TransferBatchBridge.release(this.session.getBatchHandler()));
 
         this.session.setPacketCodec(player.getProtocol().getCodec());
         this.session.setLogging(WaterdogPE.version().debug());

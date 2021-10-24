@@ -209,7 +209,7 @@ public class PacketFactory {
         packet.setServerEngine("");
 
         SyncedPlayerMovementSettings settings = new SyncedPlayerMovementSettings();
-        settings.setMovementMode(AuthoritativeMovementMode.SERVER);
+        settings.setMovementMode(AuthoritativeMovementMode.CLIENT);
         settings.setServerAuthoritativeBlockBreaking(true);
         settings.setRewindHistorySize(0);
 

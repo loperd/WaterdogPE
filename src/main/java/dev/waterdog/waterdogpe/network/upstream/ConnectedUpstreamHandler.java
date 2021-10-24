@@ -51,6 +51,8 @@ public class ConnectedUpstreamHandler extends AbstractUpstreamHandler {
             return false;
         }
 
+        this.player.getLogger().info("Packet action - " + packet.getAction().name());
+
         TransferCallback transferCallback = this.player.getRewriteData().getTransferCallback();
         if (transferCallback != null && transferCallback.onDimChangeSuccess()) {
             throw CancelSignalException.CANCEL;

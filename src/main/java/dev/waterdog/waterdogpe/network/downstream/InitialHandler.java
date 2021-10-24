@@ -134,6 +134,11 @@ public class InitialHandler extends AbstractDownstreamHandler {
         int newDimension = determineDimensionId(rewriteData.getDimension(), packet.getDimensionId());
         TransferCallback transferCallback = new TransferCallback(this.player, this.client, packet.getDimensionId());
 
+        this.player.getLogger().info(String.format(
+                "New Dimension is - %s; Old dimension - %s",
+                packet.getDimensionId(), rewriteData.getDimension()
+        ));
+
         rewriteData.setDimension(newDimension);
         rewriteData.setTransferCallback(transferCallback);
         this.player.setDimensionChangeState(TransferCallback.TRANSFER_PHASE_1);
